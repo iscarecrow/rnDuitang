@@ -11,7 +11,25 @@ import {
   Text,
   View
 } from 'react-native';
+
+import { Provider } from 'react-redux';
+
+import configureStore from './app/store/configureStore.prod';
+
 import Me from './app/containers/Me';
+
+const store = configureStore();
+
+class MeApp extends Component {
+  render() {
+    return (
+      <Provider store={store}>
+        <Me/>
+      </Provider>
+    )
+  }
+}
+
 
 // class rnDuitang extends Component {
 //   render() {
@@ -51,4 +69,4 @@ const styles = StyleSheet.create({
   },
 });
 
-AppRegistry.registerComponent('rnDuitang', () => Me);
+AppRegistry.registerComponent('rnDuitang', () => MeApp);

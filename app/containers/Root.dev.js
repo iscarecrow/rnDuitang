@@ -1,21 +1,15 @@
 import React, { Component, PropTypes } from 'react';
 import { Provider } from 'react-redux';
-import routes from '../routes';
 import DevTools from './DevTools';
-import { Router, Route } from 'react-router';
+import Me from './containers/Me';
 
 export default class Root extends Component {
-  componentDidMount () {
-    aTrace();
-  }
   render() {
-    const { store, history } = this.props;
+    const { store } = this.props;
     return (
       <Provider store={store}>
-        <div>
-          <Router history={history} routes={routes} />
-          <DevTools />
-        </div>
+        <Me/>          
+        <DevTools />
       </Provider>
     )
   }
@@ -23,5 +17,4 @@ export default class Root extends Component {
 
 Root.propTypes = {
   store: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired
 }

@@ -1,6 +1,11 @@
 'use strict';
 
-import React, { Component } from 'react';
+import React, { PropTypes, Component } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import * as fetchOrderCountActions from '../actions/fetchOrderCount';
+import * as setUnreadCountActions from '../actions/setUnreadCount';
+import * as setUserInfoActions from '../actions/setUserInfo';
 // import Request from '../lib/Request';
 // import URLRouter from '../lib/URLRouter';
 // import Image from '../lib/Image';
@@ -9,17 +14,17 @@ import React, { Component } from 'react';
 // import SimpleStorage from '../lib/SimpleStorage';
 // import Application from "../lib/Application";
 // import DTrace from "../lib/DTrace";
-import DtTools from '../common/dtTools';
 import * as Url from '../constants/UrlServer';
 import * as Api from '../constants/ApiServer';
 import * as BroadCastTypes from '../constants/BroadCastTypes';
+import * as SimpleStorageTypes from '../constants/SimpleStorageTypes';
 
 import {
   StyleSheet,
   Text,
   View,
-  Image,
   Platform,
+  Image,
   TouchableHighlight,
   TouchableNativeFeedback,
   PixelRatio,
@@ -259,40 +264,6 @@ class Me extends Component {
       visitMePageCount: 0,
       // 默认false, 非更新用户
       isUpdateUser: false,
-      user: {
-        id: "",
-        username: "",
-        avatar: "",
-        identity:[],
-        isDaren:false,
-        shortDescription:""
-      },
-      orderList: {
-        waitReceiveCount: 0,
-        waitSendCount: 0,
-        waitPayCount: 0,
-        waitReceiveCountText:'',
-        waitSendCountText: '',
-        waitPayCountText: '',
-      },
-      unreadInfo: {
-        albumFavoriteCount:0,
-        albumLikeCount:0,
-        articleCommentCount:0,
-        articleFavoriteCount:0,
-        articleLikeCount:0,
-        blogCommentCount:0,
-        blogForwardCount:0,
-        blogLikeCount:0,
-        letterCount:0,
-        letterCountText: 0,
-        messagegCount:0,
-        recommendFriendCount:0,
-        recommendFriendCountText:0,
-        topicCommentLikeCount:0,
-        topicCommentReplyCount:0,
-        topicCommentCount:0
-      },
       // 评论数
       allCommentCount:0,
       // 赞/收藏数
@@ -346,39 +317,38 @@ class Me extends Component {
           allCommentCount: 0
         });
         break;
-      case 'http://buy.duitang.com/buy/promobagList/?__urlopentype=pageweb':
-        this.setState({
-          promobagNewCount:0
-        });
-        break;
       case 'duitang://www.duitang.com/my/message/favorite_like/?new_message=1':
         UnreadService.readFavoriteLikeCount();
         this.setState({
           allFavoriteCount: 0
         });
         break;
-      case 'http://buy.duitang.com/buy/coupon/my/?__urlopentype=pageweb':
+      case Url.myLuckyBag:
+        this.setState({
+          promobagNewCount:0
+        });
+        break;
+      case Url.myCoupon:
         UnreadService.readFreshManCoupon();
         break;
-      case 'duitang://www.duitang.com/people/recommend/':
+      case Url.peopleRecommend:
         UnreadService.readFriendCount();
         this.setState({
           allRcommendFriendCount: 0
         });
         break;
-      
-      // 我的收藏三次逻辑
-      case 'duitang://www.duitang.com/my/favorite/':
-        SimpleStorage.getInt('key_visit_me_page_count').then( value => {
+      case Url.myFavorite:
+        // 我的收藏三次逻辑
+        SimpleStorage.getInt(SimpleStorageTypes.key_visit_me_page_count).then( value => {
           if (value !== null) {
             let newCount;
             this.setState({visitMePageCount: value});
             if (value < 3) {
               newCount = value +1;
-              SimpleStorage.setInt('key_visit_me_page_count', newCount);
+              SimpleStorage.setInt(SimpleStorageTypes.key_visit_me_page_count, newCount);
             }
           } else {
-            SimpleStorage.setInt('key_visit_me_page_count', 1);
+            SimpleStorage.setInt(SimpleStorageTypes.key_visit_me_page_count, 1);
           }
         });
         break;
@@ -388,6 +358,7 @@ class Me extends Component {
   }
 
   broadCastStart() {
+    const {setUnreadCount,setUserInfo} = this.props;
     // 底部tab 点击切换
     subscriptionMainPageTabDidSelect = NativeAppEventEmitter.addListener(
       'DTMainPageTabDidSelect',
@@ -401,27 +372,24 @@ class Me extends Component {
       jsn => {
         if (jsn.data.name == "freshman_coupon_receive_success") {
           this.setState({hasGotFreshManCouponBag: true});
-          SimpleStorage.setBool('key_has_got_freshman_couponbag', true);
+          SimpleStorage.setBool(SimpleStorageTypes.key_has_got_freshman_couponbag, true);
         }
       }
     );
     //用户信息变化的通知 
     subscriptionUserInfoDidChange = NativeAppEventEmitter.addListener(
       'DTUserInfoDidChange',
-      jsn => this.setUserInfo(jsn.data)
+      jsn => setUserInfo(jsn.data)
     );
     // unread 轮询的数据, 评论 收藏 聊天 添加好友
     subscriptionMessageCountDidChange = NativeAppEventEmitter.addListener(
       'DTMessageCountDidChange',
-      jsn => {
-        this.setUnreadCount(jsn)
-      }
+      jsn => setUnreadCount(jsn)
     );
   }
   updateUserInfo() {
-    // let user = await UserService.getAll();
-    // this.setUserInfo(user);
-    UserService.getAll().then(jsn => this.setUserInfo(jsn));
+    const { setUserInfo } = this.props;
+    UserService.getAll().then(jsn => setUserInfo(jsn));
   }
 
   loadPromobagNewCount() {
@@ -433,110 +401,27 @@ class Me extends Component {
   setFreshmanLuckBag () {
     UserService.isFreshman().then(jsn => this.setState({isFreshman:jsn}));
 
-    SimpleStorage.getBool('key_has_got_freshman_couponbag').then((result,err) => {
+    SimpleStorage.getBool(SimpleStorageTypes.key_has_got_freshman_couponbag).then((result,err) => {
       if (result !== null) {
         this.setState({
           hasGotFreshManCouponBag : result
         })
       } else {
         // 未领取
-        SimpleStorage.setBool('key_has_got_freshman_couponbag', false);
+        SimpleStorage.setBool(SimpleStorageTypes.key_has_got_freshman_couponbag, false);
         this.setState({
           hasGotFreshManCouponBag: false
         })
       }
     });
   }
-  // 设置User信息
-  setUserInfo(jsn) {
-    let reg = /_certify/ig;
-    let identity = jsn.identity || [];
-    let isDaren = identity.some(item => reg.test(item) == true);
-    jsn.avatar = DtTools.dtImageTrans(jsn.avatar, true, 100, 100, 'c');
-    this.setState({user:{
-      id: jsn.id,
-      username: jsn.username,
-      avatar:jsn.avatar,
-      identity: identity,
-      isDaren:isDaren,
-      shortDescription:jsn.short_description
-    }}) 
-  }
-  // 设置未读计数
-  setUnreadCount(jsn) {
-    let letter_count_text =jsn.data.letter_count || 0;
-    let article_favorite_count = jsn.data.article_favorite_count || 0;
-    let album_favorite_count = jsn.data.album_favorite_count ||0;
-    let recommend_friend_count_text = jsn.data.recommend_friend_count;
-    let allCommentCount = jsn.data.blog_comment_count + jsn.data.topic_comment_count + jsn.data.topic_comment_reply_count + jsn.data.article_comment_count;
-
-    let allFavoriteCount = jsn.data.blog_like_count + jsn.data.blog_forward_count + album_favorite_count +jsn.data.album_like_count +jsn.data.topic_comment_like_count + jsn.data.article_like_count + article_favorite_count;
-
-    if (jsn.data.letter_count > 99) {
-      letter_count_text = '99+'; 
-    }
-    if (jsn.data.recommend_friend_count > 99) {
-      recommend_friend_count_text = '99+';
-    }
-    this.setState({
-      allCommentCount:allCommentCount,
-      allFavoriteCount:allFavoriteCount,
-      allRcommendFriendCount: jsn.data.recommend_friend_count,
-      unreadInfo: {
-        albumFavoriteCount:jsn.data.album_favorite_count,
-        albumLikeCount:jsn.data.album_like_count,
-        articleCommentCount:jsn.data.article_comment_count,
-        articleFavoriteCount:jsn.data.article_favorite_count,
-        articleLikeCount:jsn.data.article_like_count,
-        blogCommentCount:jsn.data.blog_comment_count,
-        blogForwardCount:jsn.data.blog_forward_count,
-        blogLikeCount:jsn.data.blog_like_count,
-        letterCount:jsn.data.letter_count,
-        letterCountText:letter_count_text,
-        recommendFriendCount:jsn.data.recommend_friend_count,
-        recommendFriendCountText: recommend_friend_count_text,
-        topicCommentLikeCount:jsn.data.topic_comment_like_count,
-        topicCommentReplyCount:jsn.data.topic_comment_reply_count,
-        topicCommentCount:jsn.data.topic_comment_count
-      }
-    })
-  }
   loadUnreadCount() {
-    Request.get('http://www.duitang.com/napi/unread/').then(jsn => {
-      this.setUnreadCount(jsn)
-    });
+    const {setUnreadCount} = this.props;
+    Request.get('http://www.duitang.com/napi/unread/').then(jsn => setUnreadCount(jsn));
   }
   loadOrderListCount() {
-    let orderListApi = Api.orderListCount+"?order_status=to_be_paid,to_be_delivered,to_be_received";
-    Request.get(orderListApi).then(jsn => {
-      let to_be_received = jsn.data.to_be_received || 0;
-      let to_be_delivered =  jsn.data.to_be_delivered || 0;
-      let to_be_paid = jsn.data.to_be_paid || 0;
-
-      let to_be_delivered_text = to_be_delivered;
-      let to_be_received_text  = to_be_received ;
-      let to_be_paid_text = to_be_paid;
-
-      if (to_be_delivered > 99) {
-        to_be_delivered_text ='99+';
-      }
-      if (to_be_received > 99) {
-        to_be_received_text = '99+';
-      }
-      if (to_be_paid > 99) {
-        to_be_paid_text = '99+';
-      }
-      this.setState({
-        orderList: {
-          waitReceiveCount: to_be_received,
-          waitSendCount: to_be_delivered,
-          waitPayCount: to_be_paid,
-          waitReceiveCountText: to_be_received_text,
-          waitSendCountText: to_be_delivered_text,
-          waitPayCountText: to_be_paid_text
-        }
-      });
-    });
+    const { fetchOrderCount } = this.props;
+    fetchOrderCount();
   }
   render () {
     let TouchableElement = TouchableHighlight;
@@ -547,30 +432,33 @@ class Me extends Component {
     let urlMyMessageComment = Url.myMessageComment;
     let urlMyMessageFavorite = Url.myMessageFavorite;
 
-    if (this.state.allCommentCount > 0) {
-      urlMyMessageComment = urlMyMessageComment + '?new_message=1';
+    const { orderCountData, unreadCountData, userInfoData } = this.props;
+
+    if (unreadCountData.allCommentCount > 0) {
+      urlMyMessageComment = `${urlMyMessageComment}?new_message=1`;
     } else {
-      urlMyMessageComment = urlMyMessageComment + '?new_message=0';
+      urlMyMessageComment = `${urlMyMessageComment}?new_message=0`;
     }
 
-    if (this.state.allFavoriteCount > 0) {
-      urlMyMessageFavorite = urlMyMessageFavorite + '?new_message=1';
+    if (unreadCountData.allFavoriteCount > 0) {
+      urlMyMessageFavorite = `${urlMyMessageFavorite}?new_message=1`;
     } else {
-      urlMyMessageFavorite = urlMyMessageFavorite + '?new_message=0';
+      urlMyMessageFavorite = `${urlMyMessageFavorite}?new_message=0`;
     }
-    let urlPeopleDetail = Url.peopleDetail + '?id=' + this.state.user.id;
-    
+
+    let urlPeopleDetail = `${Url.peopleDetail}?id=${userInfoData.id}`;
+
     return (
       <ScrollView style={styles.bg_color}>
         <TouchableElement underlayColor={'rgb(70,70,70)'} onPress={()=>this.onPressButton(urlPeopleDetail,'MYPROFILE')}>
           <View style={[styles.me_container,styles.border_bottom]}>
             <View style={styles.me_avatar_outer}>
-              {this.state.user.avatar !== ""? <Image style={styles.me_avatar} source={{uri:this.state.user.avatar}}/> :null}
-              {this.state.user.isDaren ? <Image style={styles.me_daren} source={require('../image/verified_icon_L/verified_icon_L.png')}/>:null}
+              {userInfoData.avatar !== ""? <Image style={styles.me_avatar} source={{uri:userInfoData.avatar}}/> :null}
+              {userInfoData.isDaren ? <Image style={styles.me_daren} source={require('../image/verified_icon_L/verified_icon_L.png')}/>:null}
             </View>
             <View style={styles.flex_1}>
-              <Text style={styles.me_username}>{this.state.user.username}</Text>
-              {this.state.user.shortDescription != "" ? <Text style={styles.me_desc}>{this.state.user.shortDescription}</Text>: null}
+              <Text style={styles.me_username}>{userInfoData.username}</Text>
+              {userInfoData.shortDescription != "" ? <Text style={styles.me_desc}>{userInfoData.shortDescription}</Text>: null}
             </View> 
             <Image style={styles.me_icon_r} source={require('../image/icon_forward.imageset/icon_forward.png')}/>
           </View>
@@ -588,11 +476,11 @@ class Me extends Component {
           <TouchableElement underlayColor={'rgba(217,217,217,0)'} style={[styles.flex_1]} onPress={()=>this.onPressButton(Url.orderWaitPay)}>
             <View style={[styles.flex_1,styles.order_item]}>
               <Image style={styles.order_image} source={require('../image/icon_me_wait_pay.png')}/>
-              {this.state.orderList.waitPayCount >0 &&this.state.orderList.waitPayCount <10? <View style={styles.order_count_border_circle}>
-                <Text style={styles.order_count}>{this.state.orderList.waitPayCountText}</Text>
+              {orderCountData.waitPayCount >0 &&orderCountData.waitPayCount <10? <View style={styles.order_count_border_circle}>
+                <Text style={styles.order_count}>{orderCountData.waitPayCountText}</Text>
               </View>: null}
-              { this.state.orderList.waitPayCount > 9 ? <View style={styles.order_count_border}>
-                <Text style={styles.order_count}>{this.state.orderList.waitPayCountText}</Text>
+              { orderCountData.waitPayCount > 9 ? <View style={styles.order_count_border}>
+                <Text style={styles.order_count}>{orderCountData.waitPayCountText}</Text>
               </View>: null}
               <Text style={styles.order_desc}>待付款</Text>
             </View>
@@ -600,11 +488,11 @@ class Me extends Component {
           <TouchableElement underlayColor={'rgba(217,217,217,0)'} style={[styles.flex_1]} onPress={()=>this.onPressButton(Url.orderWaitSend)}>
           <View style={[styles.flex_1,styles.order_item]}>
             <Image style={styles.order_image} source={require('../image/icon_send.png')}/>
-            {this.state.orderList.waitSendCount >0 && this.state.orderList.waitSendCount <10 ? <View style={styles.order_count_border_circle}>
-                <Text style={styles.order_count}>{this.state.orderList.waitSendCountText}</Text>
+            {orderCountData.waitSendCount >0 && orderCountData.waitSendCount <10 ? <View style={styles.order_count_border_circle}>
+                <Text style={styles.order_count}>{orderCountData.waitSendCountText}</Text>
               </View>: null}
-            {this.state.orderList.waitSendCount >9 ? <View style={styles.order_count_border}>
-                <Text style={styles.order_count}>{this.state.orderList.waitSendCountText}</Text>
+            {orderCountData.waitSendCount >9 ? <View style={styles.order_count_border}>
+                <Text style={styles.order_count}>{orderCountData.waitSendCountText}</Text>
               </View>: null}
             <Text style={styles.order_desc}>待发货</Text>
           </View>
@@ -612,11 +500,11 @@ class Me extends Component {
           <TouchableElement underlayColor={'rgba(217,217,217,0)'} style={[styles.flex_1]} onPress={()=>this.onPressButton(Url.orderWaitReceive)}>
             <View style={[styles.flex_1,styles.order_item]}>
               <Image style={styles.order_image} source={require('../image/icon_receive.png')}/>
-              {this.state.orderList.waitReceiveCount >0 && this.state.orderList.waitReceiveCount < 10? <View style={styles.order_count_border_circle}>
-                <Text style={styles.order_count}>{this.state.orderList.waitReceiveCountText}</Text>
+              {orderCountData.waitReceiveCount >0 && orderCountData.waitReceiveCount < 10? <View style={styles.order_count_border_circle}>
+                <Text style={styles.order_count}>{orderCountData.waitReceiveCountText}</Text>
               </View>: null}
-              {this.state.orderList.waitReceiveCount >9? <View style={styles.order_count_border}>
-                <Text style={styles.order_count}>{this.state.orderList.waitReceiveCountText}</Text>
+              {orderCountData.waitReceiveCount >9? <View style={styles.order_count_border}>
+                <Text style={styles.order_count}>{orderCountData.waitReceiveCountText}</Text>
               </View>: null}
               <Text style={styles.order_desc}>待收货</Text>
             </View>
@@ -691,7 +579,7 @@ class Me extends Component {
             <View style={styles.item}>
               <Image style={styles.item_icon} source={require('../image/me_icon_comments/me_icon_comments.png')}/>
               <Text style={styles.item_desc}>评论</Text>
-              {(this.state.allCommentCount > 0) ? <View style={styles.item_red_count}></View>: null}
+              {(unreadCountData.allCommentCount > 0) ? <View style={styles.item_red_count}></View>: null}
               <Image style={styles.item_icon_r} source={require('../image/icon_forward.imageset/icon_forward.png')}/>
             </View>
           </TouchableElement>
@@ -701,7 +589,7 @@ class Me extends Component {
             <View style={styles.item}>
               <Image style={styles.item_icon} source={require('../image/me_icon_notification/me_icon_notification.png')}/>
               <Text style={styles.item_desc}>收藏/赞</Text>
-              {(this.state.allFavoriteCount > 0 ) ? <View style={styles.item_red_count}></View>: null}
+              {(unreadCountData.allFavoriteCount > 0 ) ? <View style={styles.item_red_count}></View>: null}
               <Image style={styles.item_icon_r} source={require('../image/icon_forward.imageset/icon_forward.png')}/>
             </View>
           </TouchableElement>
@@ -711,11 +599,11 @@ class Me extends Component {
             <View style={styles.item}>
               <Image style={styles.item_icon} source={require('../image/me_icon_message/me_icon_message.png')}/>
               <Text style={styles.item_desc}>聊天</Text>
-              {this.state.unreadInfo.letterCount > 0 && this.state.unreadInfo.letterCount<10? <View style={styles.item_count_border_circle}>
-                <Text style={styles.item_count}>{this.state.unreadInfo.letterCountText}</Text>
+              {unreadCountData.letterCount > 0 && unreadCountData.letterCount<10? <View style={styles.item_count_border_circle}>
+                <Text style={styles.item_count}>{unreadCountData.letterCountText}</Text>
               </View>: null}
-               {this.state.unreadInfo.letterCount > 9 ? <View style={styles.item_count_border}>
-                <Text style={styles.item_count}>{this.state.unreadInfo.letterCountText}</Text>
+               {unreadCountData.letterCount > 9 ? <View style={styles.item_count_border}>
+                <Text style={styles.item_count}>{unreadCountData.letterCountText}</Text>
               </View>: null}    
               <Image style={styles.item_icon_r} source={require('../image/icon_forward.imageset/icon_forward.png')}/>
             </View>
@@ -728,11 +616,11 @@ class Me extends Component {
               <View style={styles.item}>
                 <Image style={styles.item_icon} source={require('../image/profile_icon_follow/profile_icon_follow.png')}/>
                 <Text style={styles.item_desc}>添加好友</Text>
-                {this.state.allRcommendFriendCount > 0  && this.state.allRcommendFriendCount<10 ? <View style={styles.item_count_border_circle}>
-                  <Text style={styles.item_count}>{this.state.unreadInfo.recommendFriendCountText}</Text>
+                {unreadCountData.allRcommendFriendCount > 0  && unreadCountData.allRcommendFriendCount<10 ? <View style={styles.item_count_border_circle}>
+                  <Text style={styles.item_count}>{unreadCountData.recommendFriendCountText}</Text>
                 </View>: null}
                 {this.state.allRcommendFriendCount > 9 ? <View style={styles.item_count_border}>
-                  <Text style={styles.item_count}>{this.state.unreadInfo.recommendFriendCountText}</Text>
+                  <Text style={styles.item_count}>{unreadCountData.recommendFriendCountText}</Text>
                 </View>: null}
                 <Image style={styles.item_icon_r} source={require('../image/icon_forward.imageset/icon_forward.png')}/>
               </View>
@@ -744,4 +632,25 @@ class Me extends Component {
   } 
 }
 
-export default Me
+Me.propTypes = {
+  orderCountData: PropTypes.object.isRequired,
+  unreadCountData:PropTypes.object.isRequired,
+  userInfoData:PropTypes.object.isRequired,
+  fetchOrderCount: PropTypes.func.isRequired,
+  setUnreadCount: PropTypes.func.isRequired,
+  setUserInfo: PropTypes.func.isRequired
+}
+
+function mapStateToProps(state) {
+  return {
+    orderCountData: state.orderCountData,
+    unreadCountData: state.unreadCountData,
+    userInfoData: state.userInfoData
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(Object.assign({}, fetchOrderCountActions,setUnreadCountActions,setUserInfoActions), dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Me);
