@@ -1,6 +1,6 @@
-// 'use strict';
+'use strict';
 
-import React, { Component } from 'react';
+import React, { Component,PropTypes } from 'react';
 import {
   StyleSheet,
   TabBarIOS,
@@ -8,14 +8,22 @@ import {
   View,
 } from 'react-native';
 
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import * as navigatorActions from '../actions/navigator';
+import * as mainTabActions from '../actions/mainTab';
+import navigatorMainTab from '../constants/navigatorMainTab';
+
+// 我
 import Me from './Me';
+// 商店
 import Store from './Store';
+
 
 class MainTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedTab: 'blueTab',
       notifCount: 0,
       presses: 0,
     }
@@ -30,6 +38,12 @@ class MainTab extends Component {
       <Store/>
     );
   }
+  setNavigator(selectedTabName) {
+    const { setTab, setNavigator } = this.props;
+    setTab(selectedTabName);
+    console.log(navigatorMainTab[selectedTabName]);
+    setNavigator(navigatorMainTab[selectedTabName]);
+  }
    _renderContent(color: string, pageText: string, num?: number) {
     return (
       <View style={[styles.tabContent, {backgroundColor: color}]}>
@@ -39,6 +53,8 @@ class MainTab extends Component {
     );
   }
   render() {
+    const {mainTabData} = this.props;
+    console.log(mainTabData.selectedTabName);
     return (
        <TabBarIOS
         unselectedTintColor="#444"
@@ -48,25 +64,16 @@ class MainTab extends Component {
           title="首页"
           icon={require('../image/tab_icon_home/tab_icon_home.png')}
           selectedIcon={require('../image/tab_icon_home_highlight/tab_icon_home_highlight.png')}
-          selected={this.state.selectedTab === 'blueTab'}
-          onPress={() => {
-            this.setState({
-              selectedTab: 'blueTab',
-            });
-          }}>
+          selected={mainTabData.selectedTabName === 'home'}
+          onPress={() => this.setNavigator('home')}>
           {this._renderContent('#414A8C', 'Blue Tab')}
         </TabBarIOS.Item>
         <TabBarIOS.Item
           title="发现"
           icon={require('../image/tab_icon_explore/tab_icon_explore.png')}
           selectedIcon={require('../image/tab_icon_explore_highlight/tab_icon_explore_highlight.png')}          
-          selected={this.state.selectedTab === 'redTab'}
-          onPress={() => {
-            this.setState({
-              selectedTab: 'redTab',
-              notifCount: this.state.notifCount + 1,
-            });
-          }}>
+          selected={mainTabData.selectedTabName === 'explore'}
+          onPress={() => this.setNavigator('explore')}>
           {this._renderContent('#783E33', 'Red Tab', this.state.notifCount)}
         </TabBarIOS.Item>
         <TabBarIOS.Item
@@ -74,12 +81,8 @@ class MainTab extends Component {
           selectedIcon={require('../image/tab_icon_store_highlight/tab_icon_store_highlight.png')}
           renderAsOriginal
           title="商店"
-          selected={this.state.selectedTab === 'greenTab'}
-          onPress={() => {
-            this.setState({
-              selectedTab: 'greenTab'
-            });
-          }}>
+          selected={mainTabData.selectedTabName === 'store'}
+          onPress={() => this.setNavigator('store')}>
           {this.renderStore()}
         </TabBarIOS.Item>
         <TabBarIOS.Item
@@ -88,20 +91,14 @@ class MainTab extends Component {
           renderAsOriginal
           title="我"
           badge={this.state.presses > 0 ? this.state.presses : undefined}
-          selected={this.state.selectedTab === 'MeTab'}
-          onPress={() => {
-            this.setState({
-              selectedTab: 'MeTab',
-              presses: this.state.presses + 1
-            });
-          }}>
+          selected={mainTabData.selectedTabName === 'me'}
+          onPress={() => this.setNavigator('me')}>
           {this.renderMe()}
         </TabBarIOS.Item>
       </TabBarIOS>
     );
   }
 }
-
 
 var styles = StyleSheet.create({
   tabContent: {
@@ -114,4 +111,20 @@ var styles = StyleSheet.create({
   },
 });
 
-export default MainTab;
+MainTab.propTypes = {
+  navigatorData: PropTypes.object.isRequired,
+  mainTabData: PropTypes.object.isRequired,
+}
+
+function mapStateToProps(state) {
+  return {
+    navigatorData: state.navigatorData,
+    mainTabData: state.mainTabData,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(Object.assign({}, navigatorActions,mainTabActions), dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainTab);

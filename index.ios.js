@@ -16,9 +16,10 @@ import { Provider } from 'react-redux';
 
 import configureStore from './app/store/configureStore.prod';
 
-import Me from './app/containers/Me';
+// import MainTab from './app/containers/MainTab';
 
-import MainTab from './app/containers/MainTab';
+import Navigator from './app/containers/Navigator';
+
 
 const store = configureStore();
 
@@ -26,7 +27,7 @@ class MeApp extends Component {
   render() {
     return (
       <Provider store={store}>
-        <MainTab/>
+        <Navigator/>
       </Provider>
     )
   }
