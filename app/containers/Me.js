@@ -307,7 +307,7 @@ class Me extends Component {
   }
   onPressButton (url,dtraceKey) {
     if (dtraceKey) {
-      DTrace.event("ME_TAB",{"TAB_SUB_GOTO":dtraceKey});
+      // DTrace.event("ME_TAB",{"TAB_SUB_GOTO":dtraceKey});
     }
     
     switch(url) {
