@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import Me from './Me';
+import Store from './Store';
 
 class MainTab extends Component {
   constructor(props) {
@@ -22,6 +23,11 @@ class MainTab extends Component {
   renderMe() {
     return (
       <Me/>
+    );
+  }
+  renderStore() {
+    return (
+      <Store/>
     );
   }
    _renderContent(color: string, pageText: string, num?: number) {
@@ -53,7 +59,8 @@ class MainTab extends Component {
         <TabBarIOS.Item
           title="发现"
           icon={require('../image/tab_icon_explore/tab_icon_explore.png')}
-          selectedIcon={require('../image/tab_icon_explore_highlight/tab_icon_explore_highlight.png')}          selected={this.state.selectedTab === 'redTab'}
+          selectedIcon={require('../image/tab_icon_explore_highlight/tab_icon_explore_highlight.png')}          
+          selected={this.state.selectedTab === 'redTab'}
           onPress={() => {
             this.setState({
               selectedTab: 'redTab',
@@ -70,18 +77,17 @@ class MainTab extends Component {
           selected={this.state.selectedTab === 'greenTab'}
           onPress={() => {
             this.setState({
-              selectedTab: 'greenTab',
-              presses: this.state.presses + 1
+              selectedTab: 'greenTab'
             });
           }}>
-          {this._renderContent('#21551C', 'Green Tab', this.state.presses)}
+          {this.renderStore()}
         </TabBarIOS.Item>
         <TabBarIOS.Item
           icon={require('../image/tab_icon_me/tab_icon_me.png')}
           selectedIcon={require('../image/tab_icon_me_highlight/tab_icon_me_highlight.png')}
           renderAsOriginal
           title="我"
-          badge={this.state.notifCount > 0 ? this.state.notifCount : undefined}
+          badge={this.state.presses > 0 ? this.state.presses : undefined}
           selected={this.state.selectedTab === 'MeTab'}
           onPress={() => {
             this.setState({
