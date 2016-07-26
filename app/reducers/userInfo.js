@@ -19,7 +19,7 @@ const initialState = {
   username: "兔纸语",
   avatar: "http://img3.duitang.com/uploads/item/201509/07/20150907111057_r3BZt.png",
   identity:['xxx_certify','bbbb'],
-  isDaren:false,
+  isDaren:true,
   shortDescription:"我就随便写写",
 };
 

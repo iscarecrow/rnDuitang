@@ -1,11 +1,11 @@
 'use strict';
 
-import React from 'react-native';
+import React, { PropTypes, Component } from 'react';
 import iosSwiper from 'react-native-swiper';
-import Image from '../lib/Image';
+// import Image from '../lib/Image';
 import URLRouter from '../lib/URLRouter';
 
-let {
+import {
   Text,
   View,
   PixelRatio,
@@ -14,7 +14,8 @@ let {
   TouchableNativeFeedback,
   ScrollView,
   Dimensions,
-} = React;
+  Image
+} from 'react-native';
 
 let styles = React.StyleSheet.create({
   item_container: {

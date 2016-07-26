@@ -1,10 +1,10 @@
 'use strict';
 
-import React from 'react-native';
-import Image from '../lib/Image';
-import URLRouter from '../lib/URLRouter';
+import React, { PropTypes, Component } from 'react';
+// import Image from '../lib/Image';
+// import URLRouter from '../lib/URLRouter';
 
-let {
+import {
   Text,
   View,
   PixelRatio,
@@ -13,9 +13,11 @@ let {
   TouchableNativeFeedback,
   ScrollView,
   Dimensions,
-} = React;
+  Image,
+  StyleSheet
+} from 'react-native';
 
-let styles = React.StyleSheet.create({
+let styles = StyleSheet.create({
   item_container: {
     flexDirection: 'column',
     flex:1,
@@ -72,7 +74,7 @@ let styles = React.StyleSheet.create({
 
 export default class IndexSmallCard extends React.Component {
   _onPressButton (url) {
-    URLRouter.handle(url);
+    // URLRouter.handle(url);
   }
    
   render () {

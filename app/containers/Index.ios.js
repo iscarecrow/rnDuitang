@@ -1,11 +1,10 @@
 'use strict';
 
-import React from 'react-native';
-import Request from '../lib/Request';
-import TableView from '../lib/TableView';
-import URLRouter from '../lib/URLRouter';
-
-
+import React, { PropTypes, Component } from 'react';
+// import Request from '../lib/Request';
+// import TableView from '../lib/TableView';
+// import URLRouter from '../lib/URLRouter';
+// import TableView from 'react-native-tableview';
 // view
 // 大卡
 import IndexBigCard from '../components/IndexBigCard';
@@ -15,93 +14,123 @@ import IndexSingleSmallCard from '../components/IndexSingleSmallCard';
 import IndexTime from '../components/IndexTime';
 
 // mock data
-import apiData from '../mock/apiData';
+// import apiData from '../mock/apiData';
 
-import newapiData from '../mock/newapiData';
+// import newapiData from '../mock/newapiData';
 
-import {IndexApi} from '../constants/IndexApi';
-
+import * as ApiServer from '../constants/ApiServer';
 // tools
 import IndexDataTransform from '../part/IndexDataTransform';
+
 import _ from 'underscore';
 
 
-let Section = TableView.Section;
-let Item = TableView.Item;
-let Cell = TableView.Cell;
+// let Section = TableView.Section;
+// let Item = TableView.Item;
+// let Cell = TableView.Cell;
 
 
-let {
+import {
   ListView,
   RecyclerViewBackedScrollView,
   StyleSheet,
   Text,
   View
-} = React;
+} from 'react-native';
 
-let styles = React.StyleSheet.create({
+let styles = StyleSheet.create({
   flex_1: {
     flex: 1,
   }
 });
 
+const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
-export default class Index extends React.Component {
+export default class Index extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      dataSource:ds,
       tableSourece: [],
       cacheList:[],
       limit:10,
       start:0,
       refreshing:false,
       loadingMore:false,
+      isReach:true
     };
   }
   _loadCardFromServer (refreshObjs) {
     
     // 方案三
-    let uri = IndexApi + '&start=' + this.state.start +'&limit='+this.state.limit;
-    
-    Request.get(uri, (error, jsn) => {
-      // 重置页面
-      if(refreshObjs && refreshObjs.hasOwnProperty('isRefresh') && refreshObjs.isRefresh) {
+    let uri = ApiServer.adBannerList + '&start=' + this.state.start +'&limit='+this.state.limit;
+    console.log(uri);
 
-        let tableData = IndexDataTransform(jsn.data.object_list);
+    fetch(uri)
+      .then(response => response.json())
+      .then((jsn)=> {
 
-        this.setState({
-          loadingMore:false,
-          refreshing:false,
-          tableSourece:tableData,
-        });
-        // this.setState({
-        //   tableSourece: [],
-        //   cacheList: [],
-        //   loadingMore:false,
-        //   refreshing:false,
-        // });
-      } else {
         // 处理数据
         let cache = this.state.cacheList;
+
         jsn.data.object_list.map((elem) =>{
           cache.push(elem);
         });
         
         let tableData = IndexDataTransform(cache);
         
-        console.log(tableData)
         this.setState({
-          tableSourece: tableData,
+          dataSource: ds.cloneWithRows(tableData),
           cacheList: cache,
           loadingMore:false,
           refreshing:false,
+          isReach:false,
           start: jsn.data.next_start
         });
-      }
 
-    });
+      });
+
+    // dataSource
+    
+    // Request.get(uri, (error, jsn) => {
+    //   // 重置页面
+    //   if(refreshObjs && refreshObjs.hasOwnProperty('isRefresh') && refreshObjs.isRefresh) {
+
+    //     let tableData = IndexDataTransform(jsn.data.object_list);
+
+    //     this.setState({
+    //       loadingMore:false,
+    //       refreshing:false,
+    //       tableSourece:tableData,
+    //     });
+    //   } else {
+    //     // 处理数据
+    //     let cache = this.state.cacheList;
+    //     jsn.data.object_list.map((elem) =>{
+    //       cache.push(elem);
+    //     });
+        
+    //     let tableData = IndexDataTransform(cache);
+        
+    //     console.log(tableData)
+    //     this.setState({
+    //       tableSourece: tableData,
+    //       cacheList: cache,
+    //       loadingMore:false,
+    //       refreshing:false,
+    //       start: jsn.data.next_start
+    //     });
+    //   }
+
+    // });
   }
   componentDidMount() {
+    this._loadCardFromServer();
+  }
+  _onEndReached() {
+    this.setState({
+      isReach: true
+    });
     this._loadCardFromServer();
   }
   _onRefresh() {
@@ -117,36 +146,31 @@ export default class Index extends React.Component {
     this._loadCardFromServer();
   }
   _onPress(event) {
-    // URLRouter.handle("duitang://www.duitang.com/album/detail/?id=74533204");
+  }
+  _renerRow (item) {
+    // {_.isArray(item) ? <IndexBigCard data={item}/> : null}
+    return (
+      <View style={styles.flex_1}>
+        {_.isNumber(item) ? <IndexTime data={item}/> : null}
+        
+        {_.isObject(item) && !_.isArray(item) ? <IndexSingleSmallCard data={item}/> : null}
+      </View>
+    );
   }
   render () {
 
-    function renderCard(item) {
-      if (_.isNumber(item)) {
-        return <Cell><IndexTime data={item}/></Cell>
-      } else if (_.isArray(item)) {
-        return <Cell><IndexBigCard data={item}/></Cell>
-      } else if (_.isObject(item) && !_.isArray(item)) {
-        return <Cell><IndexSingleSmallCard data={item}/></Cell>
-      }
-    }
-    
-    let items = this.state.tableSourece.map((item,i) =>
-      <Section key={i} style={styles.flex_1}>
-        {renderCard(item)}
-      </Section>
-    );
-
     return (
-      <TableView style={styles.flex_1}
-        refreshing={this.state.refreshing}
-        loadingMore={this.state.loadingMore}
-        onLoadingStart={()=>this._onLoadMore()}
-        onRefreshStart={()=>this._onRefresh()} 
-        onPress={(event) => this._onPress(event)}
-         >
-        {items}
-      </TableView>
+      <View>
+        <ListView
+          style={styles.flex_1}
+          initialListSize = {1}
+          onEndReached = {() => this._onEndReached()}
+          onEndReachedThreshold = {700}
+          removeClippedSubviews = {false}
+          dataSource={this.state.dataSource}
+          renderRow={this._renerRow}/>
+      </View>
     );
   } 
 }
+

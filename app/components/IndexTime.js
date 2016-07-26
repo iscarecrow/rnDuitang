@@ -1,15 +1,17 @@
 'use strict';
 
-import React from 'react-native';
+import React, { PropTypes, Component } from 'react';
 
 import DtTimeTransform from '../part/DtTimeTransform';
 
-let {
+import {
   Text,
   View,
-} = React;
+  StyleSheet
+} from 'react-native';
 
-let styles = React.StyleSheet.create({
+
+let styles = StyleSheet.create({
   container: {
     height:24,
     justifyContent: 'center',

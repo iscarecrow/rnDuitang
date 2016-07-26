@@ -1,11 +1,10 @@
 'use strict';
 
-import React from 'react-native';
+import React, { PropTypes, Component } from 'react';
 import Swiper from 'react-native-swiper';
-import Image from '../lib/Image';
 // import URLRouter from '../lib/URLRouter';
 
-let {
+import {
   Text,
   View,
   Platform,
@@ -13,12 +12,11 @@ let {
   TouchableNativeFeedback,
   ScrollView,
   Dimensions,
-} = React;
+  Image,
+  StyleSheet
+} from 'react-native';
 
-let styles = React.StyleSheet.create({
-  wrapper: {
-
-  },
+let styles = StyleSheet.create({
   slide: {
     flex:1,
   },
@@ -116,7 +114,7 @@ export default class IndexBigCard extends React.Component {
             <Image style={styles.slide_bg} source={{uri: item.image_url}} />
           </View>
           <View style={styles.slide_bg_wrapper}>
-            <Image style={styles.slide_mask} source={require('../image/banner_cover.png')}/>
+            <Image style={styles.slide_mask} source={require('../image/banner_cover/banner_cover.png')}/>
           </View>
           <View style={styles.slide_container}>
             <View style={styles.slide_cnt_container}>

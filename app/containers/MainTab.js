@@ -18,7 +18,8 @@ import navigatorMainTab from '../constants/navigatorMainTab';
 import Me from './Me';
 // 商店
 import Store from './Store';
-
+// 首页
+import Index from './Index';
 
 class MainTab extends Component {
   constructor(props) {
@@ -36,6 +37,11 @@ class MainTab extends Component {
   renderStore() {
     return (
       <Store/>
+    );
+  }
+  renderIndex() {
+    return (
+      <Index/>
     );
   }
   setNavigator(selectedTabName) {
@@ -66,7 +72,7 @@ class MainTab extends Component {
           selectedIcon={require('../image/tab_icon_home_highlight/tab_icon_home_highlight.png')}
           selected={mainTabData.selectedTabName === 'home'}
           onPress={() => this.setNavigator('home')}>
-          {this._renderContent('#414A8C', 'Blue Tab')}
+          {this._renderContent('#333', 'Red Tab')}
         </TabBarIOS.Item>
         <TabBarIOS.Item
           title="发现"
