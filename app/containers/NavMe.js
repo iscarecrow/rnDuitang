@@ -11,36 +11,30 @@ import { connect } from 'react-redux';
 import * as navigatorActions from '../actions/navigator';
 
 import Me from './Me';
-import NavStore from './NavStore';
+import Set from './Set';
 
 class NavMe extends Component {
   _handleNavigationRequest(nextRoute) {
-    alert('分享还没做');
-    console.log(this.props);
-
-    this.props.navigator.push(nextRoute);
+    this.refs.nav.push(nextRoute);
   }
   render() {
     const { navigatorData } = this.props;
-
     const nextRoute = {
-      title: "购物车",
-      component: NavStore,
-      rightButtonTitle: 'Cancel',
-      onRightButtonPress: () => { this.refs.nav.navigator.pop(); }
+      leftButtonTitle: '',
+      title: "设置",
+      component: Set
     };
-    
-
     return (
       <NavigatorIOS
+        ref='nav'
         initialRoute={{
           component: Me,
           title: '我',
-          rightButtonTitle: '购物车',
+          rightButtonIcon: require('../image/icon_set_dark/icon_set_dark.png'),
           onRightButtonPress: () => this._handleNavigationRequest(nextRoute),
         }}
         style={{flex: 1}}
-        tintColor="#008888"
+        tintColor="#333"
       />
     );
   }

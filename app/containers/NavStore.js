@@ -17,8 +17,11 @@ class NavStore extends Component {
         initialRoute={{
           component: Store,
           title: '堆糖商店',
+          rightButtonIcon: require('../image/icon_cart/icon_cart.png'),
+          leftButtonIcon:require('../image/icon_membership/icon_membership_for_all.png')
         }}
         style={{flex: 1}}
+        tintColor='#333'
       />
     );
   }

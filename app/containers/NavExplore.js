@@ -26,8 +26,10 @@ class NavExplore extends Component {
           rightButtonTitle: '分享',
           onRightButtonPress: () => this._handleNavigationRequest(),
         }}
-        style={{flex: 1}}
-        tintColor="#008888"
+        style={{flex:1}}
+        tintColor="#333"
+        barTintColor="green"
+        titleTextColor="green"
       />
     );
   }
