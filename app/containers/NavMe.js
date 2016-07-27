@@ -31,6 +31,7 @@ class NavMe extends Component {
           component: Me,
           title: '我',
           rightButtonIcon: require('../image/icon_set_dark/icon_set_dark.png'),
+          passProps: { myProp: 'from me' },
           onRightButtonPress: () => this._handleNavigationRequest(nextRoute),
         }}
         style={{flex: 1}}

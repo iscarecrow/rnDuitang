@@ -26,7 +26,6 @@ class Store extends Component {
         domStorageEnabled={true}
         decelerationRate="normal"
         startInLoadingState={true}
-        style={{marginTop: 20}}
       />
     );
   }

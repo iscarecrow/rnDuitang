@@ -12,7 +12,8 @@ class Set extends Component {
       
     }
   }
-  _handleNextPress(nextRoute) {
+  componentDidMount() {
+    console.log(this.props);     
   }
   render() {
     return (
