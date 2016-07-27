@@ -16,18 +16,26 @@ import { Provider } from 'react-redux';
 
 import configureStore from './app/store/configureStore.prod';
 
-// import MainTab from './app/containers/MainTab';
+import NavigatorBar from './app/containers/NavigatorBar';
+import MainTab from './app/containers/MainTab';
 
-import Navigator from './app/containers/Navigator';
-
+// import NavigatorIOSApp from './app/testcomponents/NavigatorIOSApp';
 
 const store = configureStore();
+
+// class MeApp extends Component {
+//   render() {
+//     return (
+//       <NavigatorIOSApp/>
+//     )
+//   }
+// }
 
 class MeApp extends Component {
   render() {
     return (
       <Provider store={store}>
-        <Navigator/>
+        <MainTab/>
       </Provider>
     )
   }

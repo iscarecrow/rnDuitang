@@ -9,26 +9,25 @@ import * as navigatorActions from '../actions/navigator';
 
 import MainTab from './MainTab';
 
-class Navigator extends Component {
+class NavigatorBar extends Component {
   componentWillUpdate(nextProps, nextState) {
-      console.log('nextProps');
-      console.log(nextProps.refs);
-      console.log(nextState);
-      console.log(this.refs);
     // this.refs.nav.push({
     //   component: MainTab,
     //   title: navigatorData.title,
     // })
   }
+  _handleNavigationRequest() {
+    alert('分享还没做')
+  }
   render() {
     const { navigatorData } = this.props;
-    console.log('navigatorData.title');
-    console.log(navigatorData.title);
     return (
       <NavigatorIOS
         initialRoute={{
           component: MainTab,
           title: navigatorData.title,
+          rightButtonTitle: '分享',
+          onRightButtonPress: () => this._handleNavigationRequest(),
         }}
         style={{flex: 1}}
       />
@@ -36,7 +35,7 @@ class Navigator extends Component {
   }
 }
 
-Navigator.propTypes = {
+NavigatorBar.propTypes = {
   navigatorData: PropTypes.object.isRequired
 }
 
@@ -50,4 +49,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(Object.assign({}, navigatorActions), dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Navigator);
+export default connect(mapStateToProps, mapDispatchToProps)(NavigatorBar);

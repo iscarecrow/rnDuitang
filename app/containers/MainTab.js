@@ -14,12 +14,14 @@ import * as navigatorActions from '../actions/navigator';
 import * as mainTabActions from '../actions/mainTab';
 import navigatorMainTab from '../constants/navigatorMainTab';
 
-// 我
-import Me from './Me';
-// 商店
-import Store from './Store';
 // 首页
 import Index from './Index';
+// 发现
+import NavExplore from './NavExplore';
+// 商店
+import NavStore from './NavStore';
+// 我
+import NavMe from './NavMe';
 
 class MainTab extends Component {
   constructor(props) {
@@ -31,12 +33,12 @@ class MainTab extends Component {
   }
   renderMe() {
     return (
-      <Me/>
+      <NavMe/>
     );
   }
   renderStore() {
     return (
-      <Store/>
+      <NavStore/>
     );
   }
   renderIndex() {
@@ -44,11 +46,20 @@ class MainTab extends Component {
       <Index/>
     );
   }
+  renderExplore() {
+    return(
+      <NavExplore/>
+    );
+  }
   setNavigator(selectedTabName) {
     const { setTab, setNavigator } = this.props;
+    const navigatorTitle = navigatorMainTab[selectedTabName];
     setTab(selectedTabName);
-    console.log(navigatorMainTab[selectedTabName]);
-    setNavigator(navigatorMainTab[selectedTabName]);
+    // this.props.navigator.push({
+    //   component: MainTab,
+    //   title: navigatorTitle,
+    // });
+    // setNavigator(navigatorTitle);
   }
    _renderContent(color: string, pageText: string, num?: number) {
     return (
@@ -60,7 +71,6 @@ class MainTab extends Component {
   }
   render() {
     const {mainTabData} = this.props;
-    console.log(mainTabData.selectedTabName);
     return (
        <TabBarIOS
         unselectedTintColor="#444"
@@ -72,7 +82,7 @@ class MainTab extends Component {
           selectedIcon={require('../image/tab_icon_home_highlight/tab_icon_home_highlight.png')}
           selected={mainTabData.selectedTabName === 'home'}
           onPress={() => this.setNavigator('home')}>
-          {this._renderContent('#333', 'Red Tab')}
+          {this._renderContent('#333', 'home Tab')}
         </TabBarIOS.Item>
         <TabBarIOS.Item
           title="发现"
@@ -80,7 +90,7 @@ class MainTab extends Component {
           selectedIcon={require('../image/tab_icon_explore_highlight/tab_icon_explore_highlight.png')}          
           selected={mainTabData.selectedTabName === 'explore'}
           onPress={() => this.setNavigator('explore')}>
-          {this._renderContent('#783E33', 'Red Tab', this.state.notifCount)}
+          {this.renderExplore()}
         </TabBarIOS.Item>
         <TabBarIOS.Item
           icon={require('../image/tab_icon_store/tab_icon_store.png')}

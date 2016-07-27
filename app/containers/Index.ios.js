@@ -158,18 +158,14 @@ export default class Index extends Component {
     );
   }
   render () {
-
     return (
-      <View>
-        <ListView
+      <ListView
           style={styles.flex_1}
-          initialListSize = {1}
           onEndReached = {() => this._onEndReached()}
           onEndReachedThreshold = {700}
           removeClippedSubviews = {false}
           dataSource={this.state.dataSource}
           renderRow={this._renerRow}/>
-      </View>
     );
   } 
 }

@@ -306,55 +306,56 @@ class Me extends Component {
     }
   }
   onPressButton (url,dtraceKey) {
-    if (dtraceKey) {
-      // DTrace.event("ME_TAB",{"TAB_SUB_GOTO":dtraceKey});
-    }
+    console.log(this.props);
+    // if (dtraceKey) {
+    //   // DTrace.event("ME_TAB",{"TAB_SUB_GOTO":dtraceKey});
+    // }
     
-    switch(url) {
-      case 'duitang://www.duitang.com/my/message/comment/?new_message=1':
-        UnreadService.readCommentCount();
-        this.setState({
-          allCommentCount: 0
-        });
-        break;
-      case 'duitang://www.duitang.com/my/message/favorite_like/?new_message=1':
-        UnreadService.readFavoriteLikeCount();
-        this.setState({
-          allFavoriteCount: 0
-        });
-        break;
-      case Url.myLuckyBag:
-        this.setState({
-          promobagNewCount:0
-        });
-        break;
-      case Url.myCoupon:
-        UnreadService.readFreshManCoupon();
-        break;
-      case Url.peopleRecommend:
-        UnreadService.readFriendCount();
-        this.setState({
-          allRcommendFriendCount: 0
-        });
-        break;
-      case Url.myFavorite:
-        // 我的收藏三次逻辑
-        SimpleStorage.getInt(SimpleStorageTypes.key_visit_me_page_count).then( value => {
-          if (value !== null) {
-            let newCount;
-            this.setState({visitMePageCount: value});
-            if (value < 3) {
-              newCount = value +1;
-              SimpleStorage.setInt(SimpleStorageTypes.key_visit_me_page_count, newCount);
-            }
-          } else {
-            SimpleStorage.setInt(SimpleStorageTypes.key_visit_me_page_count, 1);
-          }
-        });
-        break;
-    }
+    // switch(url) {
+    //   case 'duitang://www.duitang.com/my/message/comment/?new_message=1':
+    //     UnreadService.readCommentCount();
+    //     this.setState({
+    //       allCommentCount: 0
+    //     });
+    //     break;
+    //   case 'duitang://www.duitang.com/my/message/favorite_like/?new_message=1':
+    //     UnreadService.readFavoriteLikeCount();
+    //     this.setState({
+    //       allFavoriteCount: 0
+    //     });
+    //     break;
+    //   case Url.myLuckyBag:
+    //     this.setState({
+    //       promobagNewCount:0
+    //     });
+    //     break;
+    //   case Url.myCoupon:
+    //     UnreadService.readFreshManCoupon();
+    //     break;
+    //   case Url.peopleRecommend:
+    //     UnreadService.readFriendCount();
+    //     this.setState({
+    //       allRcommendFriendCount: 0
+    //     });
+    //     break;
+    //   case Url.myFavorite:
+    //     // 我的收藏三次逻辑
+    //     SimpleStorage.getInt(SimpleStorageTypes.key_visit_me_page_count).then( value => {
+    //       if (value !== null) {
+    //         let newCount;
+    //         this.setState({visitMePageCount: value});
+    //         if (value < 3) {
+    //           newCount = value +1;
+    //           SimpleStorage.setInt(SimpleStorageTypes.key_visit_me_page_count, newCount);
+    //         }
+    //       } else {
+    //         SimpleStorage.setInt(SimpleStorageTypes.key_visit_me_page_count, 1);
+    //       }
+    //     });
+    //     break;
+    // }
 
-    URLRouter.handle(url);
+    // URLRouter.handle(url);
   }
 
   broadCastStart() {
