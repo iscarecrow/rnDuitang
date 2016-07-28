@@ -7,13 +7,13 @@ import * as fetchOrderCountActions from '../actions/fetchOrderCount';
 import * as setUnreadCountActions from '../actions/setUnreadCount';
 import * as setUserInfoActions from '../actions/setUserInfo';
 // import Request from '../lib/Request';
-// import URLRouter from '../lib/URLRouter';
+import URLRouter from '../lib/URLRouter';
 // import Image from '../lib/Image';
-// import UserService from '../lib/UserService';
-// import UnreadService from '../lib/UnreadService';
-// import SimpleStorage from '../lib/SimpleStorage';
+import UserService from '../lib/UserService';
+import UnreadService from '../lib/UnreadService';
+import SimpleStorage from '../lib/SimpleStorage';
 // import Application from "../lib/Application";
-// import DTrace from "../lib/DTrace";
+import DTrace from "../lib/DTrace";
 import * as Url from '../constants/UrlServer';
 import * as Api from '../constants/ApiServer';
 import * as BroadCastTypes from '../constants/BroadCastTypes';
@@ -306,56 +306,56 @@ class Me extends Component {
     }
   }
   onPressButton (url,dtraceKey) {
-    console.log(this.props);
-    // if (dtraceKey) {
-    //   // DTrace.event("ME_TAB",{"TAB_SUB_GOTO":dtraceKey});
-    // }
-    
-    // switch(url) {
-    //   case 'duitang://www.duitang.com/my/message/comment/?new_message=1':
-    //     UnreadService.readCommentCount();
-    //     this.setState({
-    //       allCommentCount: 0
-    //     });
-    //     break;
-    //   case 'duitang://www.duitang.com/my/message/favorite_like/?new_message=1':
-    //     UnreadService.readFavoriteLikeCount();
-    //     this.setState({
-    //       allFavoriteCount: 0
-    //     });
-    //     break;
-    //   case Url.myLuckyBag:
-    //     this.setState({
-    //       promobagNewCount:0
-    //     });
-    //     break;
-    //   case Url.myCoupon:
-    //     UnreadService.readFreshManCoupon();
-    //     break;
-    //   case Url.peopleRecommend:
-    //     UnreadService.readFriendCount();
-    //     this.setState({
-    //       allRcommendFriendCount: 0
-    //     });
-    //     break;
-    //   case Url.myFavorite:
-    //     // 我的收藏三次逻辑
-    //     SimpleStorage.getInt(SimpleStorageTypes.key_visit_me_page_count).then( value => {
-    //       if (value !== null) {
-    //         let newCount;
-    //         this.setState({visitMePageCount: value});
-    //         if (value < 3) {
-    //           newCount = value +1;
-    //           SimpleStorage.setInt(SimpleStorageTypes.key_visit_me_page_count, newCount);
-    //         }
-    //       } else {
-    //         SimpleStorage.setInt(SimpleStorageTypes.key_visit_me_page_count, 1);
-    //       }
-    //     });
-    //     break;
-    // }
+    if (dtraceKey) {
+      DTrace.event("ME_TAB",{"TAB_SUB_GOTO":dtraceKey});
+    }
+     
+    switch(url) {
+      case 'duitang://www.duitang.com/my/message/comment/?new_message=1':
+        UnreadService.readCommentCount();
+        this.setState({
+          allCommentCount: 0
+        });
+        break;
+      case 'duitang://www.duitang.com/my/message/favorite_like/?new_message=1':
+        UnreadService.readFavoriteLikeCount();
+        this.setState({
+          allFavoriteCount: 0
+        });
+        break;
+      case Url.myLuckyBag:
+        this.setState({
+          promobagNewCount:0
+        });
+        break;
+      case Url.myCoupon:
+        console.log('bbba');
+        UnreadService.readFreshManCoupon();
+        break;
+      case Url.peopleRecommend:
+        UnreadService.readFriendCount();
+        this.setState({
+          allRcommendFriendCount: 0
+        });
+        break;
+      case Url.myFavorite:
+        // 我的收藏三次逻辑
+        SimpleStorage.getInt(SimpleStorageTypes.key_visit_me_page_count).then( value => {
+          if (value !== null) {
+            let newCount;
+            this.setState({visitMePageCount: value});
+            if (value < 3) {
+              newCount = value +1;
+              SimpleStorage.setInt(SimpleStorageTypes.key_visit_me_page_count, newCount);
+            }
+          } else {
+            SimpleStorage.setInt(SimpleStorageTypes.key_visit_me_page_count, 1);
+          }
+        });
+        break;
+    }
 
-    // URLRouter.handle(url);
+    URLRouter.handle(url);
   }
 
   broadCastStart() {

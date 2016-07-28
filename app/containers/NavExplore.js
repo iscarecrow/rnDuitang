@@ -28,8 +28,6 @@ class NavExplore extends Component {
         }}
         style={{flex:1}}
         tintColor="#333"
-        barTintColor="green"
-        titleTextColor="green"
       />
     );
   }

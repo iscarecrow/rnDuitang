@@ -23,6 +23,9 @@ import NavStore from './NavStore';
 // 我
 import NavMe from './NavMe';
 
+// 我的礼券
+import CouponMy from './CouponMy';
+
 class MainTab extends Component {
   constructor(props) {
     super(props);
@@ -43,7 +46,7 @@ class MainTab extends Component {
   }
   renderIndex() {
     return (
-      <Index/>
+      <CouponMy/>
     );
   }
   renderExplore() {
@@ -82,7 +85,7 @@ class MainTab extends Component {
           selectedIcon={require('../image/tab_icon_home_highlight/tab_icon_home_highlight.png')}
           selected={mainTabData.selectedTabName === 'home'}
           onPress={() => this.setNavigator('home')}>
-          {this._renderContent('#333', 'home Tab')}
+          {this.renderIndex()}
         </TabBarIOS.Item>
         <TabBarIOS.Item
           title="发现"

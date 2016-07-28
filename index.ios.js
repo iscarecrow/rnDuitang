@@ -9,7 +9,8 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  AppState
 } from 'react-native';
 
 import { Provider } from 'react-redux';
@@ -19,19 +20,25 @@ import configureStore from './app/store/configureStore.prod';
 import NavigatorBar from './app/containers/NavigatorBar';
 import MainTab from './app/containers/MainTab';
 
-// import NavigatorIOSApp from './app/testcomponents/NavigatorIOSApp';
-
 const store = configureStore();
 
-// class MeApp extends Component {
-//   render() {
-//     return (
-//       <NavigatorIOSApp/>
-//     )
-//   }
-// }
-
 class MeApp extends Component {
+  componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange);
+    AppState.addEventListener('memoryWarning', this._handleMemoryWarning);
+  }
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+    AppState.removeEventListener('memoryWarning', this._handleMemoryWarning);
+  }
+  _handleAppStateChange(currentAppState) {
+    // 后台 inactive  background
+    // 前台 active
+    console.log(currentAppState);
+  }
+  _handleMemoryWarning() {
+    console.log(this.state.memoryWarnings);
+  }
   render() {
     return (
       <Provider store={store}>

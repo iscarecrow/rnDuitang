@@ -3,7 +3,8 @@ import {
   Text,
   View,
   StyleSheet,
-  TouchableHighlight
+  TouchableHighlight,
+  TextInput
 } from 'react-native';
 
 import NavMe from './NavMe';
@@ -12,12 +13,8 @@ class Explore extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      
+      text: 'Useless Placeholder'
     }
-  }
-  _handleNextPress(nextRoute) {
-    // this.props.navigator.push(nextRoute);
-    console.log(this.props);
   }
   render() {
     const nextRoute = {
@@ -27,16 +24,27 @@ class Explore extends Component {
       onRightButtonPress: () => { this.refs.nav.navigator.pop(); }
     };
     return (
-      <TouchableHighlight onPress={() => this._handleNextPress(nextRoute)}>
+      <View>
+         
         <Text style={{marginTop: 200, alignSelf: 'center'}}>
-          点击去我的页面 {this.props.myProp}!
+          点击去我的页面 {this.props.myProp}
         </Text>
-      </TouchableHighlight>
+        <TextInput
+          style={styles.textInput}
+          onChangeText={(text) => this.setState({text})}
+          value={this.state.text}
+        />
+      </View>
     );
   }
 }
 
 var styles = StyleSheet.create({
+  textInput: {
+    height: 40, 
+    borderColor: 'gray', 
+    borderWidth: 1
+  },
   tabContent: {
     flex: 1,
     alignItems: 'center',
