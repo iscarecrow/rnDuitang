@@ -11,6 +11,8 @@ import {
   ScrollView,
   ListView,
   PixelRatio,
+  TouchableNativeFeedback,
+  Platform,
   Image
 } from 'react-native';
 
@@ -73,6 +75,13 @@ let styles = StyleSheet.create({
 
 let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
+const couponType = {
+  '未使用':1,
+  '已使用':2,
+  '已过期':4
+}
+
+
 class CouponMy extends Component {
   constructor(props) {
     super(props);
@@ -85,17 +94,38 @@ class CouponMy extends Component {
   componentDidMount() {
 
   }
-  loadCouponList() {
-    const {fetchCouponList} = this.props;
-    fetchCouponList();
+  loadCouponList(coupon_status=1) {
+    const {fetchCouponList,couponListData} = this.props;
+    let limit = couponListData.limit;
+    let start = couponListData.start;
+    let data = {
+      limit:limit,
+      start: start,
+      coupon_status:coupon_status
+    }
+    console.log(data);
+    fetchCouponList(data);
+  }
+  selectTab(tabName) {
+    const {selectCouponStatus} = this.props;
+    let coupon_status = couponType[tabName];
+    selectCouponStatus(coupon_status);
   }
   _renderRow(item) {
-    console.log(item);
     const {couponListData} = this.props;
+    let couponImage = null;
+    if (couponListData.curStatus === 1) {
+      couponImage = <Image source={require('../image/gift_voucher/gift_voucher_bg.png')}/>
+    } else if (couponListData.curStatus === 2) {
+
+    } else if (couponListData.curStatus === 4) {
+      couponImage = <Image source={require('../image/gift_voucher/gift_voucher_bg_grey.png')}/>
+    }
+
     if (couponListData.isLoadingMore) {
       return (
         <View style={styles.coupon_container}>
-          <Image source={require('../image/gift_voucher/gift_voucher_bg.png')}/>
+          {couponImage}
           <View style={styles.coupon_title}>
             <Text>{item.title}</Text>
           </View>
@@ -104,18 +134,22 @@ class CouponMy extends Component {
     }
   }
   _renderHeader() {
+    let TouchableElement = TouchableHighlight;
+    if (Platform.OS === 'android') {
+      TouchableElement = TouchableNativeFeedback;
+    }
     return(
       <View>
         <View style={[styles.tabs_container,styles.flexContainer]}>
-          <View style={[styles.flex_1,styles.bg_gray]}>
+          <TouchableElement style={[styles.flex_1,styles.bg_gray]} onPress={()=>this.selectTab('未使用')}>
             <Text style={[styles.tab_text,styles.tab_text_on]}>未使用</Text>
-          </View>
-          <View style={[styles.flex_1,styles.tab_border_lf]}>
+          </TouchableElement>
+          <TouchableElement style={[styles.flex_1,styles.tab_border_lf]} onPress={()=>this.selectTab('已使用')}>
             <Text style={[styles.tab_text,styles.tab_text_off]}>已使用</Text>
-          </View>
-          <View style={styles.flex_1}>
+          </TouchableElement>
+          <TouchableElement style={styles.flex_1} onPress={()=>this.selectTab('已过期')}>
             <Text style={[styles.tab_text,styles.tab_text_off]}>已过期</Text>
-          </View>
+          </TouchableElement>
         </View>
         <View style={styles.line}></View>
       </View>
@@ -123,10 +157,11 @@ class CouponMy extends Component {
   }
   _onEndReached() {
     this.loadCouponList();
-    console.log('bababa');
+    console.log('endReach');
   }
   render() {
     const {couponListData} = this.props;
+    console.log('render');
     return (
       <ListView
         style={styles.flex_1}
