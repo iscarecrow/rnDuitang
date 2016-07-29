@@ -5,6 +5,8 @@ import userInfoData from './userInfo';
 import navigatorData from './navigator';
 import mainTabData from './mainTab';
 import couponListData from './couponList';
+import exploreData from './explore';
+
 
 const rootReducer = combineReducers({
   orderCountData,
@@ -12,7 +14,8 @@ const rootReducer = combineReducers({
   userInfoData,
   navigatorData,
   mainTabData,
-  couponListData
+  couponListData,
+  exploreData
 });
 
 export default rootReducer;

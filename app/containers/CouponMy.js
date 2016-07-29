@@ -92,7 +92,8 @@ class CouponMy extends Component {
     this.loadCouponList()    
   }
   componentDidMount() {
-
+    const {couponListData} = this.props;
+    console.log(couponListData);
   }
   loadCouponList(coupon_status=1) {
     const {fetchCouponList,couponListData} = this.props;

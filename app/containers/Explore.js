@@ -7,6 +7,7 @@ import {
   TextInput
 } from 'react-native';
 
+import { connect } from 'react-redux';
 import NavMe from './NavMe';
 
 class Explore extends Component {
@@ -16,6 +17,10 @@ class Explore extends Component {
       text: 'Useless Placeholder'
     }
   }
+  componentDidMount() {
+    const {exploreData} = this.props;
+    console.log(exploreData);
+  }
   render() {
     const nextRoute = {
       title: "我",
@@ -23,9 +28,12 @@ class Explore extends Component {
       rightButtonTitle: 'Cancel',
       onRightButtonPress: () => { this.refs.nav.navigator.pop(); }
     };
+    const {exploreData} = this.props;
     return (
       <View>
-         
+        <Text style={{marginTop: 200, alignSelf: 'center',color:'green'}}>
+          {exploreData.title}
+        </Text>
         <Text style={{marginTop: 200, alignSelf: 'center'}}>
           点击去我的页面 {this.props.myProp}
         </Text>
@@ -38,6 +46,14 @@ class Explore extends Component {
     );
   }
 }
+
+
+function mapStateToProps(state) {
+  return {
+    exploreData: state.exploreData,
+  };
+}
+
 
 var styles = StyleSheet.create({
   textInput: {
@@ -55,4 +71,4 @@ var styles = StyleSheet.create({
   },
 });
 
-export default Explore;
+export default connect(mapStateToProps)(Explore);
