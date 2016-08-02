@@ -1,8 +1,8 @@
 'use strict';
 
 import React, { Component, PropTypes } from 'react';
-import { 
-  NavigatorIOS 
+import {
+  NavigatorIOS
 } from 'react-native';
 
 import { bindActionCreators } from 'redux';
@@ -16,6 +16,10 @@ import Set from './Set';
 class NavMe extends Component {
   _handleNavigationRequest(nextRoute) {
     this.refs.nav.push(nextRoute);
+  }
+  componentDidMount() {
+    console.log('NavigatorIOS');
+    console.log(this.refs);
   }
   render() {
     const { navigatorData } = this.props;

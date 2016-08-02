@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
-import { 
+import {
   Text,
   View,
   StyleSheet,
   TouchableHighlight,
-  TextInput
+  TextInput,
+  ScrollView
 } from 'react-native';
 
 import { connect } from 'react-redux';
-import NavMe from './NavMe';
+import SegmentedControlIOSExample from './SegmentedControlIOSExample';
 
 class Explore extends Component {
   constructor(props) {
@@ -22,15 +23,10 @@ class Explore extends Component {
     console.log(exploreData);
   }
   render() {
-    const nextRoute = {
-      title: "我",
-      component: NavMe,
-      rightButtonTitle: 'Cancel',
-      onRightButtonPress: () => { this.refs.nav.navigator.pop(); }
-    };
     const {exploreData} = this.props;
     return (
-      <View>
+      <ScrollView>
+        <SegmentedControlIOSExample style={{marginTop:300}}/>
         <Text style={{marginTop: 200, alignSelf: 'center',color:'green'}}>
           {exploreData.title}
         </Text>
@@ -42,7 +38,7 @@ class Explore extends Component {
           onChangeText={(text) => this.setState({text})}
           value={this.state.text}
         />
-      </View>
+      </ScrollView>
     );
   }
 }
@@ -57,8 +53,8 @@ function mapStateToProps(state) {
 
 var styles = StyleSheet.create({
   textInput: {
-    height: 40, 
-    borderColor: 'gray', 
+    height: 40,
+    borderColor: 'gray',
     borderWidth: 1
   },
   tabContent: {
