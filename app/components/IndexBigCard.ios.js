@@ -13,7 +13,7 @@ import {
   ScrollView,
   Dimensions,
   Image,
-  StyleSheet
+  StyleSheet,
 } from 'react-native';
 
 let styles = StyleSheet.create({
@@ -107,7 +107,6 @@ export default class IndexBigCard extends React.Component {
       TouchableElement = TouchableNativeFeedback;
     }
     const {data} = this.props;
-    console.log(data);
     let items = data.map((item,i) =>
       <View style={styles.slide} key={i}>
           <View style={styles.slide_bg_wrapper}>
@@ -126,17 +125,17 @@ export default class IndexBigCard extends React.Component {
     );
     return (
       <View>
-        <Swiper style={styles.wrapper} height={Dimensions.get('window').width/1.8} renderPagination={renderPagination} 
+        <Swiper style={styles.wrapper} height={Dimensions.get('window').width/3.2}                      renderPagination={renderPagination}
           autoplay={false}
           onMomentumScrollEnd={this._onMomentumScrollEnd}
           paginationStyle={{
             bottom: -23,left: null, right: 10,
-          }} 
+          }}
           bounces={true}
         >
           {items}
         </Swiper>
       </View>
     )
-  } 
+  }
 }

@@ -61,7 +61,7 @@ export default class Index extends Component {
     };
   }
   _loadCardFromServer (refreshObjs) {
-    
+
     // 方案三
     let uri = ApiServer.adBannerList + '&start=' + this.state.start +'&limit='+this.state.limit;
     console.log(uri);
@@ -69,16 +69,15 @@ export default class Index extends Component {
     fetch(uri)
       .then(response => response.json())
       .then((jsn)=> {
-
         // 处理数据
         let cache = this.state.cacheList;
 
         jsn.data.object_list.map((elem) =>{
           cache.push(elem);
         });
-        
+
         let tableData = IndexDataTransform(cache);
-        
+        console.log(jsn.data.next_start);
         this.setState({
           dataSource: ds.cloneWithRows(tableData),
           cacheList: cache,
@@ -91,7 +90,7 @@ export default class Index extends Component {
       });
 
     // dataSource
-    
+
     // Request.get(uri, (error, jsn) => {
     //   // 重置页面
     //   if(refreshObjs && refreshObjs.hasOwnProperty('isRefresh') && refreshObjs.isRefresh) {
@@ -109,9 +108,9 @@ export default class Index extends Component {
     //     jsn.data.object_list.map((elem) =>{
     //       cache.push(elem);
     //     });
-        
+
     //     let tableData = IndexDataTransform(cache);
-        
+
     //     console.log(tableData)
     //     this.setState({
     //       tableSourece: tableData,
@@ -128,9 +127,12 @@ export default class Index extends Component {
     this._loadCardFromServer();
   }
   _onEndReached() {
+    if (this.state.isReach)  return;
+
     this.setState({
       isReach: true
     });
+
     this._loadCardFromServer();
   }
   _onRefresh() {
@@ -146,13 +148,13 @@ export default class Index extends Component {
     this._loadCardFromServer();
   }
   _onPress(event) {
+
   }
   _renerRow (item) {
-    // {_.isArray(item) ? <IndexBigCard data={item}/> : null}
     return (
       <View style={styles.flex_1}>
         {_.isNumber(item) ? <IndexTime data={item}/> : null}
-        
+        {_.isArray(item) ? <IndexBigCard data={item}/> : null}
         {_.isObject(item) && !_.isArray(item) ? <IndexSingleSmallCard data={item}/> : null}
       </View>
     );
@@ -163,10 +165,8 @@ export default class Index extends Component {
           style={styles.flex_1}
           onEndReached = {() => this._onEndReached()}
           onEndReachedThreshold = {700}
-          removeClippedSubviews = {false}
           dataSource={this.state.dataSource}
           renderRow={this._renerRow}/>
     );
-  } 
+  }
 }
-

@@ -26,6 +26,19 @@ import NavMe from './NavMe';
 // 我的礼券
 import CouponMy from './CouponMy';
 
+
+var styles = StyleSheet.create({
+  tabContent: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  tabText: {
+    color: 'white',
+    margin: 50,
+  },
+});
+
+
 class MainTab extends Component {
   constructor(props) {
     super(props);
@@ -46,7 +59,7 @@ class MainTab extends Component {
   }
   renderIndex() {
     return (
-      <CouponMy/>
+      <Index/>
     );
   }
   renderExplore() {
@@ -90,7 +103,7 @@ class MainTab extends Component {
         <TabBarIOS.Item
           title="发现"
           icon={require('../image/tab_icon_explore/tab_icon_explore.png')}
-          selectedIcon={require('../image/tab_icon_explore_highlight/tab_icon_explore_highlight.png')}          
+          selectedIcon={require('../image/tab_icon_explore_highlight/tab_icon_explore_highlight.png')}
           selected={mainTabData.selectedTabName === 'explore'}
           onPress={() => this.setNavigator('explore')}>
           {this.renderExplore()}
@@ -119,16 +132,6 @@ class MainTab extends Component {
   }
 }
 
-var styles = StyleSheet.create({
-  tabContent: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  tabText: {
-    color: 'white',
-    margin: 50,
-  },
-});
 
 MainTab.propTypes = {
   navigatorData: PropTypes.object.isRequired,
