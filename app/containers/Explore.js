@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 
 import { connect } from 'react-redux';
-import SegmentedControlIOSExample from './SegmentedControlIOSExample';
 
 class Explore extends Component {
   constructor(props) {
@@ -20,13 +19,11 @@ class Explore extends Component {
   }
   componentDidMount() {
     const {exploreData} = this.props;
-    console.log(exploreData);
   }
   render() {
     const {exploreData} = this.props;
     return (
       <ScrollView>
-        <SegmentedControlIOSExample style={{marginTop:300}}/>
         <Text style={{marginTop: 200, alignSelf: 'center',color:'green'}}>
           {exploreData.title}
         </Text>

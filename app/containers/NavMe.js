@@ -12,6 +12,8 @@ import * as navigatorActions from '../actions/navigator';
 
 import Me from './Me';
 import Set from './Set';
+// import Test from '../testComponents/Test';
+
 
 class NavMe extends Component {
   _handleNavigationRequest(nextRoute) {
