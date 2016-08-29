@@ -4,11 +4,18 @@ import {
   View,
   StyleSheet,
   TouchableHighlight,
-  TextInput,
-  ScrollView
+  TouchableNativeFeedback,
+  ScrollView,
+  Platform
 } from 'react-native';
-
 import { connect } from 'react-redux';
+
+import Button from 'react-native-button';
+
+import * as PageNameTypes from '../constants/PageNameTypes';
+
+import InventoryDetail from './InventoryDetail';
+
 
 class Explore extends Component {
   constructor(props) {
@@ -20,21 +27,37 @@ class Explore extends Component {
   componentDidMount() {
     const {exploreData} = this.props;
   }
+  _handlePress(name) {
+    switch (name) {
+      case name = PageNameTypes.inventoryDetail:
+        const nextRoute = {
+          component: InventoryDetail,
+          title: '商品详情'
+        };
+        this.props.navigator.push(nextRoute);
+        console.log(this); 
+        console.log('Pressed!');
+        break;
+
+    }
+
+
+    
+  }
   render() {
-    const {exploreData} = this.props;
+   let TouchableElement = TouchableHighlight;
+    if (Platform.OS === 'android') {
+      TouchableElement = TouchableNativeFeedback;
+    }
+
     return (
       <ScrollView>
-        <Text style={{marginTop: 200, alignSelf: 'center',color:'green'}}>
-          {exploreData.title}
-        </Text>
-        <Text style={{marginTop: 200, alignSelf: 'center'}}>
-          点击去我的页面 {this.props.myProp}
-        </Text>
-        <TextInput
-          style={styles.textInput}
-          onChangeText={(text) => this.setState({text})}
-          value={this.state.text}
-        />
+         <Button
+          style={{fontSize: 16, color: '#333',paddingTop:12,paddingBottom:12}}
+          styleDisabled={{color: 'red'}}
+          onPress={() => this._handlePress(PageNameTypes.inventoryDetail)}>
+          商品详情页面
+        </Button>
       </ScrollView>
     );
   }

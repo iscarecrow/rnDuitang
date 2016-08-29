@@ -25,7 +25,7 @@ import NavMe from './NavMe';
 
 // 我的礼券
 import CouponMy from './CouponMy'; 
-import Test from '../testComponents/Test';
+// import Test from '../testComponents/Test';
 
 
 var styles = StyleSheet.create({
@@ -61,7 +61,7 @@ class MainTab extends Component {
   renderIndex() {
     // Index
     return (
-      <Test/>
+      <Index/>
     );
   }
   renderExplore() {

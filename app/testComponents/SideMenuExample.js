@@ -58,7 +58,7 @@ class Button extends Component {
   }
 }
 
-module.exports = class Test extends Component {
+module.exports = class SideMenuExample extends Component {
   state = {
     isOpen: false,
     selectedItem: 'About',

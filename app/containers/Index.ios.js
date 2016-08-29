@@ -161,13 +161,16 @@ export default class Index extends Component {
   }
   render () {
     return (
-      <ListView
-          style={styles.flex_1}
-          onEndReached = {() => this._onEndReached()}
-          enableEmptySections={true}
-          onEndReachedThreshold = {700}
-          dataSource={this.state.dataSource}
-          renderRow={this._renerRow}/>
+      <Text>2222</Text>
     );
   }
 }
+
+
+// <ListView
+//           style={styles.flex_1}
+//           onEndReached = {() => this._onEndReached()}
+//           enableEmptySections={true}
+//           onEndReachedThreshold = {700}
+//           dataSource={this.state.dataSource}
+//           renderRow={this._renerRow}/>
