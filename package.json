@@ -7,11 +7,12 @@
     "start1": "react-native start"
   },
   "dependencies": {
-    "react": "15.2.1",
-    "react-native": "0.30.0",
-    "react-native-button": "^1.6.0",
+    "react": "15.4.1",
+    "react-native": "0.39.2",
+    "react-native-button": "1.6.0",
     "react-native-gifted-messenger": "0.1.4",
     "react-native-lightbox": "0.6.0",
+    "react-native-maps": "^0.12.2",
     "react-native-navbar": "1.5.0",
     "react-native-swiper": "^1.4.7",
     "react-native-tableview": "1.5.2",
